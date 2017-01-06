@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk
 
-RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y git curl git-buildpackage dh-make && rm -rf /var/lib/apt/lists/*
 
 
 ENV JENKINS_HOME /var/jenkins_home
@@ -59,6 +59,8 @@ RUN mkdir -p /usr/local/go
 RUN curl -fsSL https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz -o /usr/local/go/go.tar.gz
 RUN tar -xvf /usr/local/go/go.tar.gz
 ENV GOROOT=/usr/local/go
+
+# Install packages need for debian packaging
 
 # for main web interface:
 EXPOSE 8080
