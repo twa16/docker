@@ -2,14 +2,15 @@ FROM openjdk:8-jdk
 
 RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
+
 ENV JENKINS_HOME /var/jenkins_home
 ENV JENKINS_SLAVE_AGENT_PORT 50000
-
+ENV GOPATH /var/jenkins_home/workspace/GOPATH
 ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
 ARG gid=1000
-
+RUN export PATH=$PATH:$GOPATH/bin
 # Jenkins is run with user `jenkins`, uid = 1000
 # If you bind mount a volume from the host or a data container, 
 # ensure you use the same uid
@@ -19,6 +20,7 @@ RUN groupadd -g ${gid} ${group} \
 # Jenkins home directory is a volume, so configuration and build history 
 # can be persisted and survive image upgrades
 VOLUME /var/jenkins_home
+RUN mkdir -p /var/jenkins_home/workspace/GOPATH
 
 # `/usr/share/jenkins/ref/` contains all reference configuration we want 
 # to set on a fresh new installation. Use it to bundle additional plugins 
@@ -51,6 +53,12 @@ RUN curl -fsSL ${JENKINS_URL} -o /usr/share/jenkins/jenkins.war \
 
 ENV JENKINS_UC https://updates.jenkins.io
 RUN chown -R ${user} "$JENKINS_HOME" /usr/share/jenkins/ref
+
+# Install GO
+RUN mkdir -p /usr/local/go
+RUN curl -fsSL https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz -o /usr/local/go/go.tar.gz
+RUN tar -xvf /usr/local/go/go.tar.gz
+ENV GOROOT=/usr/local/go
 
 # for main web interface:
 EXPOSE 8080
