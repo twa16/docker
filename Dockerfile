@@ -57,11 +57,11 @@ RUN chown -R ${user} "$JENKINS_HOME" /usr/share/jenkins/ref
 # Install GO
 RUN mkdir -p /usr/local/go
 RUN curl -fsSL https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz -o /usr/local/go/go.tar.gz
-RUN tar -xvf /usr/local/go/go.tar.gz
+RUN tar -xvf /usr/local/go/go.tar.gz -C /usr/local/
 ENV GOROOT=/usr/local/go
-
+ENV PATH="$PATH:/usr/local/go/bin"
 # Install packages need for debian packaging
-
+RUN echo $PATH
 # for main web interface:
 EXPOSE 8080
 
